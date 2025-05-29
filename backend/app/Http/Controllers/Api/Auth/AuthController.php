@@ -4,11 +4,23 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\AuthResource;
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
+    private AuthService $AuthService;
+
+    public function __construct(
+        AuthService $AuthService,
+    ) {
+        $this->AuthService = $AuthService;
+    }
+
     public function register(RegisterRequest $request)
     {
-        return response()->json(['message' => 'test']);
+        $user = $this->AuthService->storeUser($request->all());
+
+        return new AuthResource($user);
     }
 }
