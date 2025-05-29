@@ -41,7 +41,13 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    public function failedValidation(Validator $validator)
+    /**
+     * json error message
+     *
+     * @param Validator $validator
+     * @return void
+     */
+    public function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
             response()->json([
