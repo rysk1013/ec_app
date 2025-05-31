@@ -15,7 +15,7 @@ class AuthResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'message' => 'Registration successful',
+            'message' => 'Registration successful.',
             'user' => [
                 'id' => $this->id,
                 'name' => $this->name,
@@ -27,4 +27,3 @@ class AuthResource extends JsonResource
         ];
     }
 }
-

@@ -51,7 +51,7 @@ class RegisterRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'message' => 'The given data was invalid',
+                'message' => 'The given data was invalid.',
                 'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY)
         );
