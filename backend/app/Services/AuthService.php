@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Exceptions\Auth\RegisterFailedException;
 use App\Constants\AuthConstants;
 use App\Models\User;
 
@@ -13,9 +14,10 @@ class AuthService
      * Create User
      *
      * @param array $request
-     * @return void
+     * @return User
+     * @throws RegisterFailedException
      */
-    public function storeUser($request)
+    public function storeUser(array $request): User
     {
         try {
             DB::beginTransaction();
@@ -39,6 +41,8 @@ class AuthService
                 'Error in' => $e->getFile(),
                 'Line' => $e->getLine(),
             ]);
+
+            throw new RegisterFailedException();
         }
     }
 }
