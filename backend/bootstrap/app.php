@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'An unexpected error occurred. Please try again later',
+                    'message' => 'An unexpected error occurred. Please try again later.',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         });
