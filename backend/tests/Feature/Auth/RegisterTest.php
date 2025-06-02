@@ -63,6 +63,7 @@ class RegisterTest extends TestCase
     #[Test]
     public function it_returns_validation_error_if_required_fields_are_missing(): void
     {
+        // Missing email and password
         $userData = [
             'name' => 'Test User',
         ];
@@ -73,6 +74,40 @@ class RegisterTest extends TestCase
             ->assertJsonValidationErrors([
                 'email',
                 'password'
+            ]);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'Test User',
+        ]);
+
+        // Missing name and password
+        $userData = [
+            'email' => 'test@example.com',
+        ];
+
+        $response = $this->postJson('api/register', $userData);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors([
+                'name',
+                'password'
+            ]);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'Test User',
+        ]);
+
+        // Missing name and email
+        $userData = [
+            'password' => 'password123',
+        ];
+
+        $response = $this->postJson('api/register', $userData);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors([
+                'name',
+                'email'
             ]);
 
         $this->assertDatabaseMissing('users', [
@@ -185,13 +220,13 @@ class RegisterTest extends TestCase
     }
 
     /**
-     * User registration failed if something happened
+     * User registration fails if something happened
      */
     #[Test]
     public function it_returns_exception_error_if_user_registration_failed(): void
     {
-        $mock = Mockery::mock(AuthService::class)
-            ->shouldReceive('storeUser')
+        $mock = Mockery::mock(AuthService::class);
+        $mock->shouldReceive('storeUser')
             ->andThrows(new RegisterFailedException());
 
         $this->app->instance(AuthService::class, $mock);
@@ -199,13 +234,15 @@ class RegisterTest extends TestCase
         $userData = [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password1234',
-            'password_confirmation' => 'password5678'
+            'password' => 'password123',
+            'password_confirmation' => 'password123'
         ];
 
         $response = $this->postJson('api/register', $userData);
 
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-            ->assertJsonStructure(['message']);
+            ->assertJson([
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ]);
     }
 }
