@@ -36,7 +36,7 @@ class GetAuthenticatedUserTest extends TestCase
     public function login($user): string
     {
         $loginData = [
-            'email' => $user['email'],
+            'email' => $user->email,
             'password' => 'password123',
         ];
         $response = $this->postJson('api/login', $loginData);
