@@ -22,7 +22,7 @@ class CategoryController extends Controller
     {
         $categories = $this->CategoryService->getCategories();
 
-        return (CategoryResource::collection($categories))
+        return CategoryResource::collection($categories)
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
