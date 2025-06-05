@@ -19,11 +19,6 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'パソコン・周辺機器',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'name' => '本',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -44,6 +39,11 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'name' => 'スポーツ用品',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'name' => 'ゲーム',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -55,6 +55,11 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => '美容',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'パソコン・周辺機器',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
