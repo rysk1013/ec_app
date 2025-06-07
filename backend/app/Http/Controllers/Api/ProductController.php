@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\http\Resources\ProductResource;
+use App\Http\Requests\ProductIndexRequest;
+use App\Http\Resources\ProductCollection;
 use App\Services\ProductService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,11 +19,11 @@ class ProductController extends Controller
         $this->ProductService = $ProductService;
     }
 
-    public function index()
+    public function index(ProductIndexRequest $request)
     {
-        $products = $this->ProductService->getProducts();
+        $products = $this->ProductService->getProducts($request->all());
 
-        return ProductResource::collection($products)
+        return (new ProductCollection($products))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }

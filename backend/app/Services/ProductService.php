@@ -14,9 +14,9 @@ class ProductService
         //
     }
 
-    public function getProducts()
+    public function getProducts($parameter)
     {
-        $products = Product::select([
+        $query = Product::select([
                 'products.id',
                 'products.name',
                 'products.description',
@@ -28,8 +28,38 @@ class ProductService
                 'products.created_at',
                 'products.updated_at',
             ])
-            ->join('categories', 'categories.id', '=', 'products.category_id')
-            ->get();
+            ->join('categories', 'categories.id', '=', 'products.category_id');
+
+            if (isset($parameter['category_id'])) {
+                $query->where('products.category_id', $parameter['category_id']);
+            }
+
+            if (isset($parameter['min_price'])) {
+                $query->where('products.price', '>=', $parameter['min_price']);
+            }
+
+            if (isset($parameter['max_price'])) {
+                $query->where('products.price', '<=', $parameter['max_price']);
+            }
+
+            if (isset($parameter['keyword'])) {
+                $keyword = '%' . $parameter['keyword'] . '%';
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('products.name', 'LIKE', $keyword)
+                        ->orWhere('products.description', 'LIKE', $keyword);
+                });
+            }
+
+            if (isset($parameter['sort_by'])) {
+                $query->sortBy($parameter['sort_by']);
+            }
+
+            $sortBy = $parameter['sort_by'] ?? 'id';
+            $sortOrder = $parameter['sort_order'] ?? 'desc';
+
+            $query->orderBy($sortBy, $sortOrder);
+
+            $products = $query->paginate($parameter['per_page'] ?? 10);
 
             return $products;
     }
