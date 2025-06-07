@@ -19,7 +19,7 @@ class ProductController extends Controller
         $this->ProductService = $ProductService;
     }
 
-    public function index(ProductIndexRequest $request)
+    public function index(ProductIndexRequest $request): JsonResponse
     {
         $products = $this->ProductService->getProducts($request->all());
 

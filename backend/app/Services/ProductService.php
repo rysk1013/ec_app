@@ -6,15 +6,18 @@ use App\Models\Product;
 
 class ProductService
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct()
     {
         //
     }
 
-    public function getProducts($parameter)
+    /**
+     * Get all products
+     *
+     * @param array $parameter
+     * @return EloquentCollection<Product>
+     */
+    public function getProducts(array $parameter): EloquentCollection
     {
         $query = Product::select([
                 'products.id',
@@ -30,37 +33,37 @@ class ProductService
             ])
             ->join('categories', 'categories.id', '=', 'products.category_id');
 
-            if (isset($parameter['category_id'])) {
-                $query->where('products.category_id', $parameter['category_id']);
-            }
+        if (isset($parameter['category_id'])) {
+            $query->where('products.category_id', $parameter['category_id']);
+        }
 
-            if (isset($parameter['min_price'])) {
-                $query->where('products.price', '>=', $parameter['min_price']);
-            }
+        if (isset($parameter['min_price'])) {
+            $query->where('products.price', '>=', $parameter['min_price']);
+        }
 
-            if (isset($parameter['max_price'])) {
-                $query->where('products.price', '<=', $parameter['max_price']);
-            }
+        if (isset($parameter['max_price'])) {
+            $query->where('products.price', '<=', $parameter['max_price']);
+        }
 
-            if (isset($parameter['keyword'])) {
-                $keyword = '%' . $parameter['keyword'] . '%';
-                $query->where(function ($q) use ($keyword) {
-                    $q->where('products.name', 'LIKE', $keyword)
-                        ->orWhere('products.description', 'LIKE', $keyword);
-                });
-            }
+        if (isset($parameter['keyword'])) {
+            $keyword = '%' . $parameter['keyword'] . '%';
+            $query->where(function ($q) use ($keyword) {
+                $q->where('products.name', 'LIKE', $keyword)
+                    ->orWhere('products.description', 'LIKE', $keyword);
+            });
+        }
 
-            if (isset($parameter['sort_by'])) {
-                $query->sortBy($parameter['sort_by']);
-            }
+        if (isset($parameter['sort_by'])) {
+            $query->sortBy($parameter['sort_by']);
+        }
 
-            $sortBy = $parameter['sort_by'] ?? 'id';
-            $sortOrder = $parameter['sort_order'] ?? 'desc';
+        $sortBy = $parameter['sort_by'] ?? 'id';
+        $sortOrder = $parameter['sort_order'] ?? 'desc';
 
-            $query->orderBy($sortBy, $sortOrder);
+        $query->orderBy($sortBy, $sortOrder);
 
-            $products = $query->paginate($parameter['per_page'] ?? 10);
+        $products = $query->paginate($parameter['per_page'] ?? 10);
 
-            return $products;
+        return $products;
     }
 }
