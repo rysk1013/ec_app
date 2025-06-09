@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Product;
 
 class ProductService
@@ -15,9 +16,9 @@ class ProductService
      * Get all products
      *
      * @param array $parameter
-     * @return EloquentCollection<Product>
+     * @return LengthAwarePaginator<Product>
      */
-    public function getProducts(array $parameter): EloquentCollection
+    public function getProducts(array $parameter): LengthAwarePaginator
     {
         $query = Product::select([
                 'products.id',

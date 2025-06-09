@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\ProductIndexRequest;
 use App\Http\Resources\ProductCollection;
 use App\Services\ProductService;
