@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\ProductIndexRequest;
-use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +24,7 @@ class ProductController extends Controller
     {
         $products = $this->ProductService->getProducts($request->all());
 
-        return (new ProductCollection($products))
+        return ProductResource::collection($products)
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
