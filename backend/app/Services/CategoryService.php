@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\Category;
 
 class CategoryService
@@ -9,9 +10,9 @@ class CategoryService
     /**
      * Get all categories
      *
-     * @return EloquentCollection<Category>
+     * @return Collection<Category>
      */
-    public function getCategories(): EloquentCollection
+    public function getCategories(): Collection
     {
         return Category::select([
                 'id',
