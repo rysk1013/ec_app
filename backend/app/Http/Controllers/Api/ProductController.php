@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\ProductIndexRequest;
+use App\Http\Requests\Product\ProductIndexRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
 use Symfony\Component\HttpFoundation\Response;
