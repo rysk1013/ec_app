@@ -207,4 +207,59 @@ class ProductTest extends TestCase
             $this->assertLessThanOrEqual($maxPrice, $product['price']);
         }
     }
+
+    /**
+     * Get a specific page of products
+     */
+    #[Test]
+    public function it_gets_a_specific_page_of_products(): void
+    {
+        $page = 2;
+        $perPage = 3;
+
+        $expectedProducts = Product::orderBy('id', 'desc')
+            ->skip($perPage * ($page -1))
+            ->take($perPage)
+            ->get();
+
+        $response = $this->getJson("api/products?page={$page}&per_page={$perPage}");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonFragment([
+                'current_page' => $page,
+                'per_page' => $perPage,
+            ]);
+
+        $responseData = $response->json('data');
+        foreach ($expectedProducts as $index => $expectedProduct) {
+            $this->assertEquals($expectedProduct->id, $responseData[$index]['id']);
+            $this->assertEquals($expectedProduct->name, $responseData[$index]['name']);
+        }
+    }
+
+    /**
+     * Validation fails with invalid category_id
+     */
+    #[Test]
+    public function it_returns_validation_error_for_invalid_category_id(): void
+    {
+        $invalidCategoryId = 9999;
+
+        $response = $this->getJson("api/products?category_id={$invalidCategoryId}");
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['category_id']);
+    }
+
+    /**
+     * Validation fails with invalid per_page parameter
+     */
+    #[Test]
+    public function it_returns_validation_error_for_invalid_per_page(): void
+    {
+        $response = $this->getJson('api/products?per_page=abc');
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['per_page']);
+    }
 }
