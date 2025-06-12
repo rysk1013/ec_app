@@ -122,7 +122,7 @@ class ProductTest extends TestCase
      * Filters products by a specific category
      */
     #[Test]
-    public function it_can_filter_products_by_category()
+    public function it_can_filter_products_by_category(): void
     {
         $category2 = Category::where('name', '本')->first();
         $expectedProductCount = Product::where('category_id', $category2->id)->count();
@@ -179,6 +179,32 @@ class ProductTest extends TestCase
         $products = $response->json('data');
         foreach ($products as $product) {
             $this->assertEquals($category2->id, $product['category']['id']);
+        }
+    }
+
+    /**
+     * Filters products by price range
+     */
+    #[Test]
+    public function it_can_filter_products_by_price_range(): void
+    {
+        $minPrice = 5000;
+        $maxPrice = 10000;
+
+        $expectedProductCount = Product::whereBetween('price', [$minPrice, $maxPrice])->count();
+
+        $response = $this->getJson("api/products?min_price={$minPrice}&max_price={$maxPrice}");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount($expectedProductCount, 'data')
+            ->assertJsonFragment([
+                'total' => $expectedProductCount,
+            ]);
+
+        $products = $response->json('data');
+        foreach ($products as $product) {
+            $this->assertGreaterThanOrEqual($minPrice, $product['price']);
+            $this->assertLessThanOrEqual($maxPrice, $product['price']);
         }
     }
 }
