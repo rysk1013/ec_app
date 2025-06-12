@@ -67,4 +67,31 @@ class ProductService
 
         return $products;
     }
+
+    /**
+     * Get product by id
+     *
+     * @param int $id
+     * @return Product|null
+     */
+    public function getProductById($id): Product|null
+    {
+        $product = Product::select([
+                'products.id',
+                'products.name',
+                'products.description',
+                'products.price',
+                'products.stock',
+                'products.image_url',
+                'products.category_id',
+                'categories.name as category_name',
+                'products.created_at',
+                'products.updated_at',
+            ])
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->where('products.id', $id)
+            ->first();
+
+        return $product;
+    }
 }
