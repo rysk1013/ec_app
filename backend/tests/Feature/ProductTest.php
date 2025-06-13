@@ -262,4 +262,72 @@ class ProductTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['per_page']);
     }
+
+    /**
+     * Successfully gets a product by product id if a product exists
+     */
+    #[Test]
+    public function it_can_get_a_product_by_id_when_product_exists(): void
+    {
+        $expectedProduct = Product::select([
+                'products.id',
+                'products.name',
+                'products.description',
+                'products.price',
+                'products.stock',
+                'products.image_url',
+                'products.category_id',
+                'categories.name as category_name',
+                'products.created_at',
+                'products.updated_at',
+            ])
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->first();
+
+        $response = $this->getJson("api/products/{$expectedProduct->id}");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'description',
+                    'price',
+                    'stock',
+                    'image_url',
+                    'category' => [
+                        'id',
+                        'name',
+                    ],
+                    'created_at',
+                    'updated_at',
+                ],
+            ]);
+
+            $product = $response->json('data');
+            $this->assertEquals($expectedProduct->id, $product['id']);
+            $this->assertEquals($expectedProduct->name, $product['name']);
+            $this->assertEquals($expectedProduct->description, $product['description']);
+            $this->assertEquals($expectedProduct->price, $product['price']);
+            $this->assertEquals($expectedProduct->stock, $product['stock']);
+            $this->assertEquals($expectedProduct->image_url, $product['image_url']);
+            $this->assertEquals($expectedProduct->category_id, $product['category']['id']);
+            $this->assertEquals($expectedProduct->category_name, $product['category']['name']);
+    }
+
+    /**
+     * Returns 404 Not Found when the product does not exist
+     */
+    #[Test]
+    public function it_returns_404_when_product_does_not_exist(): void
+    {
+        $notExistProductId = '99999';
+
+        $response = $this->getJson("api/products/{$notExistProductId}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJson([
+                'message' => 'Product not found.',
+            ]);
+    }
 }
