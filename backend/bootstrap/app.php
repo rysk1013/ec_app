@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Auth\AuthenticationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,18 +20,26 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], Response::HTTP_UNAUTHORIZED);
+        });
+
+        $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Method Not Allowed.',
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+            }
+        });
+
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Not Found.',
                 ], Response::HTTP_NOT_FOUND);
             }
-        });
-
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
-            return response()->json([
-                'message' => 'Unauthenticated.',
-            ], Response::HTTP_UNAUTHORIZED);
         });
 
         $exceptions->render(function (Throwable $e, Request $request) {

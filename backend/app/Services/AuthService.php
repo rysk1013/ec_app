@@ -13,19 +13,19 @@ class AuthService
     /**
      * Create User
      *
-     * @param array $request
+     * @param array $requestBody
      * @return User
      * @throws RegisterFailedException
      */
-    public function storeUser(array $request): User
+    public function storeUser(array $requestBody): User
     {
         try {
             DB::beginTransaction();
 
             $user = User::create([
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['password']),
+                'name' => $requestBody['name'],
+                'email' => $requestBody['email'],
+                'password' => Hash::make($requestBody['password']),
                 'is_admin' => AuthConstants::USER,
             ]);
 
