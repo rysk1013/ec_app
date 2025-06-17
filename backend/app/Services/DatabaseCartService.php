@@ -187,6 +187,15 @@ class DatabaseCartService implements CartContract
                 }): 0.0;
     }
 
+    public function clear(): void
+    {
+        if ($this->cart) {
+            $this->cart->cartItems()->delete();
+            $this->save();
+            logInfo('Database Cart: Cart cleared.', []);
+        }
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
