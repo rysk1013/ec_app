@@ -160,7 +160,7 @@ class DatabaseCartService implements CartContract
         }
     }
 
-    public function getItems(): Collection
+    public function getCartItems(): Collection
     {
         return $this->cart ?
             $this->cart->cartItems()
