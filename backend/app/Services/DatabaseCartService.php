@@ -162,29 +162,16 @@ class DatabaseCartService implements CartContract
 
     public function getCartItems(): Collection
     {
-        return $this->cart ?
-            $this->cart->cartItems()
-                ->with('product')
-                ->get()
-                ->map(function($item) {
-                    return [
-                        'product_id' => $item->product_id,
-                        'name' => $item->product->name ?? 'Unknown Product',
-                        'price' => $item->price,
-                        'quantity' => (int) $item->quantity,
-                        'image_url' => $item->product->image_url ?? null,
-                        'subtotal' => ($item->price * $item->quantity),
-                    ];
-                }) : collect([]);
+        return $this->cart
+            ? $this->cart->cartItems()->with('product')->get()
+            : collect([]);
     }
 
     public function getTotal(): float
     {
-        return $this->cart ?
-            $this->cart->cartItems()
-                ->sum(function($item) {
-                    return $item->price * $item->quantity;
-                }): 0.0;
+        return $this->cart ? $this->cart->cartItems->sum(function($item) {
+            return $item->price * $item->quantity;
+        }) : 0.0;
     }
 
     public function clear(): void

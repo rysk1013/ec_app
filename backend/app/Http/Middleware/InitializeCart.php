@@ -9,11 +9,11 @@ use App\Contracts\CartContract;
 
 class InitializeCart
 {
-    protected CartContract $CartContract;
+    protected CartContract $CartService;
 
-    public function __construct(CartContract $CartContract)
+    public function __construct(CartContract $CartService)
     {
-        $this->CartContract = $CartContract;
+        $this->CartService = $CartService;
     }
 
     /**
@@ -27,7 +27,7 @@ class InitializeCart
 
         $response = $next($request);
 
-        $this->CartContract->save();
+        $this->CartService->save();
         logInfo('InitializeCart Middleware: Cart saved after request.', []);
 
         return $response;
