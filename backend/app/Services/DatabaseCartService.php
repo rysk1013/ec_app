@@ -160,6 +160,24 @@ class DatabaseCartService implements CartContract
         }
     }
 
+    public function getItems(): Collection
+    {
+        return $this->cart ?
+            $this->cart->cartItems()
+                ->with('product')
+                ->get()
+                ->map(function($item) {
+                    return [
+                        'product_id' => $item->product_id,
+                        'name' => $item->product->name ?? 'Unknown Product',
+                        'price' => $item->price,
+                        'quantity' => (int) $item->quantity,
+                        'image_url' => $item->product->image_url ?? null,
+                        'stock' => ($item->price * $item->quantity),
+                    ];
+                }) : collect([]);
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
