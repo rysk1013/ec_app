@@ -178,6 +178,15 @@ class DatabaseCartService implements CartContract
                 }) : collect([]);
     }
 
+    public function getTotal(): float
+    {
+        return $this->cart ?
+            $this->cart->cartItems()
+                ->sum(function($item) {
+                    return $item->price * $item->quantity;
+                }): 0.0;
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
