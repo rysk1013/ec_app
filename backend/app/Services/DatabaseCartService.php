@@ -133,6 +133,33 @@ class DatabaseCartService implements CartContract
         }
     }
 
+    public function update(Product $product, int $quantity): void
+    {
+        if ($this->cart) {
+            $cartItem = $this->cart->cartItems()
+                ->where('product_id', $product->id)
+                ->first();
+
+            if ($cartItem) {
+                if ($quantity <= 0) {
+                    $cartItem->delete();
+                    logInfo('Database Cart: Item removed due to zero quantity.', [
+                        'product_id' => $product->id,
+                    ]);
+                } else {
+                    $cartItem->quantity = $quantity;
+                    $cartItem->save();
+                    logInfo('Database Cart: Item quantity updated.', [
+                        'cart_item_id' => $cartItem->id,
+                        'new_quantity' => $cartItem->quantity,
+                    ]);
+                }
+
+                $this->save();
+            }
+        }
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
