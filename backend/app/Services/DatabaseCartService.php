@@ -196,6 +196,16 @@ class DatabaseCartService implements CartContract
         }
     }
 
+    public function save(): void
+    {
+        if ($this->cart) {
+            $this->cart->touch();
+            logInfo('Database Cart: Cart header touched.', [
+                'cart_id' => $this->cart->id,
+            ]);
+        }
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
