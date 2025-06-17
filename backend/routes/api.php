@@ -17,3 +17,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'getAuthenticatedUser']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
+
+Route::middleware(InitializeCart::class)->group(function () {
+    Route::post('cart/add', [CartController::class, 'addItem']);
+    Route::delete('cart/remove/{product_id}', [CartController::class, 'removeItem']);
+    Route::put('cart/update/{product_id}', [CartController::class, 'updateItem']);
+    Route::get('cart', [CartController::class, 'getCart']);
+    Route::post('cart/clear', [CartController::class, 'clearCart']);
+});
