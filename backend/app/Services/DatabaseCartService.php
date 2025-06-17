@@ -86,6 +86,37 @@ class DatabaseCartService implements CartContract
         });
     }
 
+    public function add(Product $product, int $quantity = 1): void
+    {
+        if (!$this->cart) {
+            logInfo('Database Cart: No active cart to add item to.', []);
+            return;
+        }
+
+        $cartItem = $this->cart->cartItems()
+            ->where('product_id', $product->id)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->quantity += $quantity;
+            $quantity->save();
+            logInfo('Database Cart: Item quantity updated.', [
+                'cart_item_id' => $cartItem->id,
+                'new_quantity' => $cartItem->quantity
+            ]);
+        } else {
+            $cartItem = $this->cart->CartItems()->create([
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'prict' => $product->prict,
+            ]);
+            logInfo('Database Cart: New item added.', [
+                'cart_item_id' => $cartItem->id,
+            ]);
+        }
+        $this->save();
+    }
+
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
     {
         $guestCart->load('items.product');
