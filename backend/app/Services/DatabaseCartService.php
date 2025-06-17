@@ -8,6 +8,7 @@ use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\DB;
 use App\Contracts\CartContract;
 use App\Models\Cart;
+use App\Models\Product;
 
 class DatabaseCartService implements CartContract
 {
@@ -105,7 +106,7 @@ class DatabaseCartService implements CartContract
                 'new_quantity' => $cartItem->quantity
             ]);
         } else {
-            $cartItem = $this->cart->CartItems()->create([
+            $cartItem = $this->cart->cartItems()->create([
                 'product_id' => $product->id,
                 'quantity' => $quantity,
                 'prict' => $product->prict,
@@ -115,6 +116,21 @@ class DatabaseCartService implements CartContract
             ]);
         }
         $this->save();
+    }
+
+    public function remove(Product $product): void
+    {
+        if ($this->cart) {
+            $this->cart->cartItems()
+                ->where('product_id', $product->id)
+                ->delete();
+
+            logInfo('Database Cart: Item removed.', [
+                'product_id' => $product->id,
+            ]);
+
+            $this->save();
+        }
     }
 
     protected function mergeCarts(Cart $guestCart, Cart $destinationCart): void
@@ -149,7 +165,7 @@ class DatabaseCartService implements CartContract
                 ->first();
 
             if ($destinationItem) {
-                $destinationItem->quantity += $guestCartItem->quantity;
+                $destinationItem->quantity += $sessionItem['quantity'];
                 $destinationItem->save();
             } else {
                 $destinationCart->CartItems()->create([
