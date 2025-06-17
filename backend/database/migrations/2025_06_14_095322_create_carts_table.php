@@ -20,10 +20,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::table('carts', function (Blueprint $table) {
-            DB::statement('ALTER TABLE carts ADD CONSTRAINT check_required_user_id_or_gest_session_id CHECK (user_id IS NOT NULL OR gest_session_id IS NOT NULL);');
-        });
     }
 
     /**

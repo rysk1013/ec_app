@@ -173,7 +173,7 @@ class DatabaseCartService implements CartContract
                         'price' => $item->price,
                         'quantity' => (int) $item->quantity,
                         'image_url' => $item->product->image_url ?? null,
-                        'stock' => ($item->price * $item->quantity),
+                        'subtotal' => ($item->price * $item->quantity),
                     ];
                 }) : collect([]);
     }
